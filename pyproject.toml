@@ -1,0 +1,55 @@
+[project]
+name = "fb-photo-uploader"
+version = "0.1.0"
+description = "CLI application for batch uploading photos to Facebook albums"
+readme = "README.md"
+authors = [
+    { name = "Wander Lairson Costa", email = "wander@redhat.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "facebook-sdk>=3.1.0",
+    "typer>=0.15.1",
+    "tenacity>=9.0.0",
+    "requests>=2.32.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.24.0",
+    "responses>=0.25.0",
+    "pytest-cov>=6.0.0",
+]
+
+[project.scripts]
+fb-photo-uploader = "fb_photo_uploader.cli:app"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = [
+    "--verbose",
+    "--strict-markers",
+    "--cov=fb_photo_uploader",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.9,<0.10.0"]
+build-backend = "uv_build"
