@@ -54,15 +54,16 @@ If you want to contribute or run tests:
 git clone <repository-url>
 cd fb-photo-uploader
 
-# Install dependencies including dev dependencies
+# Install the package with dev dependencies
 # This installs: pytest, pytest-asyncio, responses, pytest-cov
-uv sync --dev
+uv pip install -e ".[dev]"
 
-# Install the CLI tool in editable mode
+# Or alternatively, sync and install extras separately
+uv sync --all-extras
 uv pip install -e .
 ```
 
-The `--dev` flag installs optional development dependencies from `pyproject.toml`:
+The `[dev]` extra installs optional development dependencies from `pyproject.toml`:
 - **pytest** - Testing framework
 - **pytest-asyncio** - Async test support
 - **responses** - HTTP request mocking for tests
