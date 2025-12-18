@@ -15,19 +15,58 @@ A robust Command Line Interface (CLI) application for batch uploading photos to 
 
 This project uses [uv](https://github.com/astral-sh/uv) for dependency management.
 
-### Setup with uv
+### Prerequisites
+
+Install uv if you haven't already:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Or on macOS/Linux:
+
+```bash
+pip install uv
+```
+
+### For Regular Use
+
+If you only want to use the tool (not develop it):
 
 ```bash
 # Clone the repository
 git clone <repository-url>
 cd fb-photo-uploader
 
-# Install dependencies
-uv sync --dev
+# Install dependencies (without dev dependencies)
+uv sync
 
 # Install the CLI tool
 uv pip install -e .
 ```
+
+### For Development
+
+If you want to contribute or run tests:
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd fb-photo-uploader
+
+# Install dependencies including dev dependencies
+# This installs: pytest, pytest-asyncio, responses, pytest-cov
+uv sync --dev
+
+# Install the CLI tool in editable mode
+uv pip install -e .
+```
+
+The `--dev` flag installs optional development dependencies from `pyproject.toml`:
+- **pytest** - Testing framework
+- **pytest-asyncio** - Async test support
+- **responses** - HTTP request mocking for tests
+- **pytest-cov** - Code coverage reporting
 
 ## Usage
 
