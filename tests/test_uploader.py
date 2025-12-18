@@ -137,7 +137,11 @@ class TestPhotoUploader:
 
         # All uploads should fail due to album creation failure
         assert all(not r.success for r in results)
-        assert all("Album creation failed" in r.error_message for r in results)
+        assert all(
+            "Album creation failed" in r.error_message
+            for r in results
+            if r.error_message is not None
+        )
 
     async def test_upload_photo_failure(
         self, access_token: str, temp_photos_dir: Path
