@@ -179,7 +179,6 @@ class FacebookAPIClient:
             FacebookAPIError: For other API errors
         """
         error_code = getattr(error, "code", None)
-        error_type = getattr(error, "type", "")
         error_message = str(error)
 
         # Check for rate limiting
@@ -191,7 +190,9 @@ class FacebookAPIClient:
             raise RateLimitError(f"Facebook API rate limit exceeded: {error_message}")
 
         # Check for server errors
-        if error_code >= 500 or "server error" in error_message.lower():
+        if (
+            error_code is not None and error_code
+        ) >= 500 or "server error" in error_message.lower():
             logger.warning(f"Server error while {context}, will retry")
             raise ServerError(f"Facebook API server error: {error_message}")
 
