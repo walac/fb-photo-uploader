@@ -97,10 +97,128 @@ fb-photo-uploader upload /path/to/photos --verbose
 
 ## Facebook API Setup
 
+To use this tool, you need a Facebook Graph API access token with photo upload permissions.
+
+### Step 1: Create a Facebook App
+
 1. Go to [Facebook Developers](https://developers.facebook.com/)
-2. Create a new app or use an existing one
-3. Generate an access token with `user_photos` and `publish_actions` permissions
-4. Use the token with the CLI
+2. Click **My Apps** in the top menu
+3. Click **Create App**
+4. Select **Business** as the app type (or **Consumer** for personal use)
+5. Fill in the app details:
+   - **App Name**: Choose a name (e.g., "Photo Uploader")
+   - **App Contact Email**: Your email address
+6. Click **Create App**
+
+### Step 2: Configure App Permissions
+
+1. In your app dashboard, go to **App Settings** → **Basic**
+2. Note your **App ID** and **App Secret** (you'll need these later)
+3. Add a platform:
+   - Scroll down to **Add Platform**
+   - Select **Website**
+   - Enter a Site URL (can be `http://localhost` for testing)
+
+### Step 3: Add Required Products
+
+1. In the left sidebar, find **Add Product**
+2. Add **Facebook Login** by clicking **Set Up**
+3. Configure Facebook Login settings:
+   - Go to **Facebook Login** → **Settings**
+   - Add `http://localhost` to **Valid OAuth Redirect URIs**
+
+### Step 4: Generate an Access Token
+
+#### Option A: Using Graph API Explorer (Recommended for Testing)
+
+1. Go to [Graph API Explorer](https://developers.facebook.com/tools/explorer/)
+2. In the top-right, select your app from the **Application** dropdown
+3. Click **Generate Access Token**
+4. In the permissions dialog, select:
+   - `user_photos` - Required to upload photos
+   - `user_videos` - Optional, if you plan to upload videos
+5. Click **Generate Access Token** and authorize the app
+6. Copy the generated access token
+
+**Important**: Tokens from Graph API Explorer are short-lived (1-2 hours). For production use, see Option B.
+
+#### Option B: Generate Long-Lived Token (Production Use)
+
+Short-lived tokens expire quickly. To get a long-lived token (60 days):
+
+```bash
+curl -G \
+  -d "grant_type=fb_exchange_token" \
+  -d "client_id=YOUR_APP_ID" \
+  -d "client_secret=YOUR_APP_SECRET" \
+  -d "fb_exchange_token=YOUR_SHORT_LIVED_TOKEN" \
+  "https://graph.facebook.com/v2.12/oauth/access_token"
+```
+
+Replace:
+- `YOUR_APP_ID` - Your app ID from Step 2
+- `YOUR_APP_SECRET` - Your app secret from Step 2
+- `YOUR_SHORT_LIVED_TOKEN` - The token from Graph API Explorer
+
+The response will contain a `access_token` field with your long-lived token.
+
+#### Option C: Get a User Access Token via Login Flow
+
+For a more permanent solution, implement the OAuth login flow:
+
+1. Direct users to:
+   ```
+   https://www.facebook.com/v2.12/dialog/oauth?
+     client_id=YOUR_APP_ID&
+     redirect_uri=YOUR_REDIRECT_URI&
+     scope=user_photos
+   ```
+
+2. After authorization, Facebook redirects to your URI with a `code` parameter
+
+3. Exchange the code for an access token:
+   ```bash
+   curl -X GET "https://graph.facebook.com/v2.12/oauth/access_token?
+     client_id=YOUR_APP_ID&
+     redirect_uri=YOUR_REDIRECT_URI&
+     client_secret=YOUR_APP_SECRET&
+     code=CODE_FROM_STEP_2"
+   ```
+
+### Step 5: Verify Your Token
+
+Test your token with:
+
+```bash
+curl -G \
+  -d "access_token=YOUR_TOKEN" \
+  "https://graph.facebook.com/v2.12/me"
+```
+
+If successful, you'll see your Facebook user information.
+
+### Step 6: Use the Token
+
+Set the token as an environment variable:
+
+```bash
+export FB_ACCESS_TOKEN=YOUR_ACCESS_TOKEN
+fb-photo-uploader upload /path/to/photos
+```
+
+Or pass it directly:
+
+```bash
+fb-photo-uploader upload /path/to/photos --access-token YOUR_ACCESS_TOKEN
+```
+
+### Important Notes
+
+- **Token Security**: Never commit access tokens to version control. Use environment variables or secure secret management.
+- **Token Expiration**: Access tokens expire. Short-lived tokens last 1-2 hours, long-lived tokens last about 60 days. Monitor expiration and refresh as needed.
+- **Permissions**: Ensure your token has `user_photos` permission. You can check permissions at [Access Token Debugger](https://developers.facebook.com/tools/debug/accesstoken/).
+- **App Review**: For production apps that access other users' data, you may need Facebook's app review. Personal use with your own account doesn't require review.
+- **Rate Limits**: Facebook enforces rate limits. This tool implements automatic retry with exponential backoff to handle rate limiting gracefully.
 
 ## Development
 
