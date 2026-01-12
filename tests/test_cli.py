@@ -44,13 +44,13 @@ class TestCLI:
             # Mock album creation (2 albums)
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/me/albums",
+                "https://graph.facebook.com/v3.1/me/albums",
                 json={"id": "album_1"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/me/albums",
+                "https://graph.facebook.com/v3.1/me/albums",
                 json={"id": "album_2"},
                 status=200,
             )
@@ -58,19 +58,19 @@ class TestCLI:
             # Mock photo uploads (album_1 has 2 photos, album_2 has 1 photo)
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_1/photos",
+                "https://graph.facebook.com/v3.1/album_1/photos",
                 json={"id": "photo_1_0"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_1/photos",
+                "https://graph.facebook.com/v3.1/album_1/photos",
                 json={"id": "photo_1_1"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_2/photos",
+                "https://graph.facebook.com/v3.1/album_2/photos",
                 json={"id": "photo_2_0"},
                 status=200,
             )
@@ -113,13 +113,13 @@ class TestCLI:
             # Mock album creation (2 albums)
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/me/albums",
+                "https://graph.facebook.com/v3.1/me/albums",
                 json={"id": "album_1"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/me/albums",
+                "https://graph.facebook.com/v3.1/me/albums",
                 json={"id": "album_2"},
                 status=200,
             )
@@ -127,19 +127,19 @@ class TestCLI:
             # Mock photo uploads (album_1 has 2 photos, album_2 has 1 photo)
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_1/photos",
+                "https://graph.facebook.com/v3.1/album_1/photos",
                 json={"id": "photo_1_0"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_1/photos",
+                "https://graph.facebook.com/v3.1/album_1/photos",
                 json={"id": "photo_1_1"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_2/photos",
+                "https://graph.facebook.com/v3.1/album_2/photos",
                 json={"id": "photo_2_0"},
                 status=200,
             )
@@ -170,13 +170,13 @@ class TestCLI:
             # Mock album creation success for both albums
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/me/albums",
+                "https://graph.facebook.com/v3.1/me/albums",
                 json={"id": "album_123"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/me/albums",
+                "https://graph.facebook.com/v3.1/me/albums",
                 json={"id": "album_456"},
                 status=200,
             )
@@ -184,19 +184,19 @@ class TestCLI:
             # Mock all photo uploads as failures (3 photos total)
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_123/photos",
+                "https://graph.facebook.com/v3.1/album_123/photos",
                 json={"error": {"message": "upload failed", "code": 100}},
                 status=400,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_123/photos",
+                "https://graph.facebook.com/v3.1/album_123/photos",
                 json={"error": {"message": "upload failed", "code": 100}},
                 status=400,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_456/photos",
+                "https://graph.facebook.com/v3.1/album_456/photos",
                 json={"error": {"message": "upload failed", "code": 100}},
                 status=400,
             )
@@ -224,13 +224,13 @@ class TestCLI:
             # Mock album creation (2 albums)
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/me/albums",
+                "https://graph.facebook.com/v3.1/me/albums",
                 json={"id": "album_1"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/me/albums",
+                "https://graph.facebook.com/v3.1/me/albums",
                 json={"id": "album_2"},
                 status=200,
             )
@@ -238,19 +238,19 @@ class TestCLI:
             # Mock photo uploads (album_1 has 2 photos, album_2 has 1 photo)
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_1/photos",
+                "https://graph.facebook.com/v3.1/album_1/photos",
                 json={"id": "photo_1_0"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_1/photos",
+                "https://graph.facebook.com/v3.1/album_1/photos",
                 json={"id": "photo_1_1"},
                 status=200,
             )
             rsps.add(
                 responses.POST,
-                "https://graph.facebook.com/v2.12/album_2/photos",
+                "https://graph.facebook.com/v3.1/album_2/photos",
                 json={"id": "photo_2_0"},
                 status=200,
             )
