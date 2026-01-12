@@ -1,5 +1,6 @@
 """Facebook API client with retry logic using official SDK."""
 
+import asyncio
 import logging
 from pathlib import Path
 from typing import Any
@@ -31,30 +32,6 @@ class ServerError(FacebookAPIError):
     """Exception raised for 5xx server errors."""
 
     pass
-
-
-def should_retry(exception: BaseException) -> bool:
-    """Determine if an exception should trigger a retry.
-
-    Args:
-        exception: The exception to check
-
-    Returns:
-        True if the exception should trigger a retry
-    """
-    if isinstance(exception, (RateLimitError, ServerError)):
-        return True
-
-    if isinstance(exception, facebook.GraphAPIError):
-        # Retry on rate limit or server errors
-        error_code = getattr(exception, "code", None)
-        if error_code in [1, 2, 4, 17, 32, 613]:  # Rate limit codes
-            return True
-        # Check for server errors in the message
-        if "server" in str(exception).lower() or "5xx" in str(exception).lower():
-            return True
-
-    return False
 
 
 class FacebookAPIClient:
@@ -116,10 +93,15 @@ class FacebookAPIClient:
             RateLimitError: If rate limit is exceeded
             ServerError: If server error occurs
         """
-        try:
-            result = self.graph.put_object(
+
+        def _blocking_create() -> dict[str, Any]:
+            return self.graph.put_object(
                 parent_object="me", connection_name="albums", name=title
             )
+
+        try:
+            loop = asyncio.get_running_loop()
+            result = await loop.run_in_executor(None, _blocking_create)
             album_id = result["id"]
             logger.info(f"Created album '{title}' with ID: {album_id}")
             return album_id
@@ -152,16 +134,20 @@ class FacebookAPIClient:
         if not photo_path.exists():
             raise FileNotFoundError(f"Photo file not found: {photo_path}")
 
-        try:
+        def _blocking_upload() -> dict[str, Any]:
             with photo_path.open("rb") as photo_file:
-                result = self.graph.put_photo(
+                return self.graph.put_photo(
                     image=photo_file, album_path=f"{album_id}/photos"
                 )
-                photo_id = result["id"]
-                logger.debug(
-                    f"Uploaded {photo_path.name} to album {album_id}, photo ID: {photo_id}"
-                )
-                return photo_id
+
+        try:
+            loop = asyncio.get_running_loop()
+            result = await loop.run_in_executor(None, _blocking_upload)
+            photo_id = result["id"]
+            logger.debug(
+                f"Uploaded {photo_path.name} to album {album_id}, photo ID: {photo_id}"
+            )
+            return photo_id
         except facebook.GraphAPIError as e:
             self._handle_graph_error(e, f"uploading {photo_path.name}")
             raise  # Never reached, but helps type checker
@@ -191,8 +177,8 @@ class FacebookAPIClient:
 
         # Check for server errors
         if (
-            error_code is not None and error_code
-        ) >= 500 or "server error" in error_message.lower():
+            error_code is not None and error_code >= 500
+        ) or "server error" in error_message.lower():
             logger.warning(f"Server error while {context}, will retry")
             raise ServerError(f"Facebook API server error: {error_message}")
 
