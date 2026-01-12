@@ -49,7 +49,7 @@ class TestPhotoUploader:
             with responses.RequestsMock() as rsps:
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"id": "album_123"},
                     status=200,
                 )
@@ -79,13 +79,13 @@ class TestPhotoUploader:
                 # Mock album creation
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"id": "album_1"},
                     status=200,
                 )
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"id": "album_2"},
                     status=200,
                 )
@@ -94,7 +94,7 @@ class TestPhotoUploader:
                 for i in range(2):
                     rsps.add(
                         responses.POST,
-                        "https://graph.facebook.com/v2.12/album_1/photos",
+                        "https://graph.facebook.com/v3.1/album_1/photos",
                         json={"id": f"photo_1_{i}"},
                         status=200,
                     )
@@ -102,7 +102,7 @@ class TestPhotoUploader:
                 # Mock photo uploads for album_2 (1 photo)
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/album_2/photos",
+                    "https://graph.facebook.com/v3.1/album_2/photos",
                     json={"id": "photo_2_0"},
                     status=200,
                 )
@@ -127,7 +127,7 @@ class TestPhotoUploader:
                 # Mock album creation failure
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"error": {"message": "bad request", "code": 100}},
                     status=400,
                 )
@@ -156,7 +156,7 @@ class TestPhotoUploader:
                 # Mock successful album creation
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"id": "album_123"},
                     status=200,
                 )
@@ -164,13 +164,13 @@ class TestPhotoUploader:
                 # Mock photo upload failures
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/album_123/photos",
+                    "https://graph.facebook.com/v3.1/album_123/photos",
                     json={"error": {"message": "upload failed", "code": 100}},
                     status=400,
                 )
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/album_123/photos",
+                    "https://graph.facebook.com/v3.1/album_123/photos",
                     json={"error": {"message": "upload failed", "code": 100}},
                     status=400,
                 )

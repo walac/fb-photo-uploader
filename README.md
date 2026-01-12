@@ -192,7 +192,7 @@ curl -G \
   -d "client_id=YOUR_APP_ID" \
   -d "client_secret=YOUR_APP_SECRET" \
   -d "fb_exchange_token=YOUR_SHORT_LIVED_TOKEN" \
-  "https://graph.facebook.com/v2.12/oauth/access_token"
+  "https://graph.facebook.com/v3.1/oauth/access_token"
 ```
 
 Replace:
@@ -208,7 +208,7 @@ For a more permanent solution, implement the OAuth login flow:
 
 1. Direct users to:
    ```
-   https://www.facebook.com/v2.12/dialog/oauth?
+   https://www.facebook.com/v3.1/dialog/oauth?
      client_id=YOUR_APP_ID&
      redirect_uri=YOUR_REDIRECT_URI&
      scope=user_photos
@@ -218,7 +218,7 @@ For a more permanent solution, implement the OAuth login flow:
 
 3. Exchange the code for an access token:
    ```bash
-   curl -X GET "https://graph.facebook.com/v2.12/oauth/access_token?
+   curl -X GET "https://graph.facebook.com/v3.1/oauth/access_token?
      client_id=YOUR_APP_ID&
      redirect_uri=YOUR_REDIRECT_URI&
      client_secret=YOUR_APP_SECRET&
@@ -232,7 +232,7 @@ Test your token with:
 ```bash
 curl -G \
   -d "access_token=YOUR_TOKEN" \
-  "https://graph.facebook.com/v2.12/me"
+  "https://graph.facebook.com/v3.1/me"
 ```
 
 If successful, you'll see your Facebook user information.

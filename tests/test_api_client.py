@@ -22,7 +22,7 @@ class TestFacebookAPIClient:
             with responses.RequestsMock() as rsps:
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"id": "album_123"},
                     status=200,
                 )
@@ -44,7 +44,7 @@ class TestFacebookAPIClient:
             with responses.RequestsMock() as rsps:
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/album_123/photos",
+                    "https://graph.facebook.com/v3.1/album_123/photos",
                     json={"id": "photo_456"},
                     status=200,
                 )
@@ -71,19 +71,19 @@ class TestFacebookAPIClient:
                 # First two calls return rate limit error, third succeeds
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"error": {"message": "rate limit", "code": 4}},
                     status=400,
                 )
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"error": {"message": "rate limit", "code": 4}},
                     status=400,
                 )
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"id": "album_123"},
                     status=200,
                 )
@@ -100,13 +100,13 @@ class TestFacebookAPIClient:
                 # First call returns 500, second succeeds
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"error": {"message": "server error", "code": 500}},
                     status=500,
                 )
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"id": "album_123"},
                     status=200,
                 )
@@ -124,7 +124,7 @@ class TestFacebookAPIClient:
                 for _ in range(5):
                     rsps.add(
                         responses.POST,
-                        "https://graph.facebook.com/v2.12/me/albums",
+                        "https://graph.facebook.com/v3.1/me/albums",
                         json={"error": {"message": "rate limit", "code": 4}},
                         status=400,
                     )
@@ -141,7 +141,7 @@ class TestFacebookAPIClient:
             with responses.RequestsMock() as rsps:
                 rsps.add(
                     responses.POST,
-                    "https://graph.facebook.com/v2.12/me/albums",
+                    "https://graph.facebook.com/v3.1/me/albums",
                     json={"error": {"message": "bad request", "code": 100}},
                     status=400,
                 )

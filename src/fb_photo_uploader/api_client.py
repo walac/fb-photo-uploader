@@ -37,12 +37,12 @@ class ServerError(FacebookAPIError):
 class FacebookAPIClient:
     """Client for interacting with Facebook Graph API using official SDK."""
 
-    def __init__(self, access_token: str, api_version: str = "2.12") -> None:
+    def __init__(self, access_token: str, api_version: str = "3.1") -> None:
         """Initialize Facebook API client.
 
         Args:
             access_token: Facebook API access token
-            api_version: Graph API version to use (format: X.Y where X is 1-9, e.g., "2.12")
+            api_version: Graph API version to use (e.g., "3.1")
         """
         self.access_token = access_token
         self.api_version = api_version
