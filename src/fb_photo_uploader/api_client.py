@@ -114,7 +114,11 @@ class FacebookAPIClient:
             if response.status_code >= 400:
                 self._handle_error_response(response.status_code, result, f"creating album '{title}'")
 
-            album_id = result["id"]
+            album_id = result.get("id")
+            if not album_id:
+                raise FacebookAPIError(
+                    f"API response missing 'id' field while creating album '{title}': {result}"
+                )
             logger.info(f"Created album '{title}' with ID: {album_id}")
             return album_id
         except httpx.RequestError as e:
@@ -161,7 +165,11 @@ class FacebookAPIClient:
             if response.status_code >= 400:
                 self._handle_error_response(response.status_code, result, f"uploading {photo_path.name}")
 
-            photo_id = result["id"]
+            photo_id = result.get("id")
+            if not photo_id:
+                raise FacebookAPIError(
+                    f"API response missing 'id' field while uploading {photo_path.name}: {result}"
+                )
             logger.debug(
                 f"Uploaded {photo_path.name} to album {album_id}, photo ID: {photo_id}"
             )
