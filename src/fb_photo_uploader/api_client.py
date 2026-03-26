@@ -58,7 +58,8 @@ class FacebookAPIClient:
 
     async def __aenter__(self) -> "FacebookAPIClient":
         """Async context manager entry."""
-        self._client = httpx.AsyncClient(timeout=30.0)
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+        self._client = httpx.AsyncClient(timeout=30.0, headers=headers)
         return self
 
     async def __aexit__(self, *args: Any) -> None:
@@ -104,7 +105,6 @@ class FacebookAPIClient:
         url = f"{self.base_url}/me/albums"
         data = {
             "name": title,
-            "access_token": self.access_token,
         }
 
         try:
@@ -154,8 +154,7 @@ class FacebookAPIClient:
             # Read file into memory to avoid blocking the event loop during async upload
             content = photo_path.read_bytes()
             files = {"source": (photo_path.name, content, mime_type)}
-            data = {"access_token": self.access_token}
-            response = await self.client.post(url, data=data, files=files)
+            response = await self.client.post(url, files=files)
 
             result = self._parse_json_response(response, f"uploading {photo_path.name}")
 
