@@ -1,5 +1,6 @@
 """White-box tests for API client retry logic."""
 
+import httpx
 import pytest
 from pathlib import Path
 from pytest_httpx import HTTPXMock
@@ -177,6 +178,73 @@ class TestFacebookAPIClient:
         async with FacebookAPIClient(access_token) as client:
             with pytest.raises(ValueError, match="Invalid album_id"):
                 await client.upload_photo("", photo_path)
+
+    async def test_non_json_5xx_response(
+        self, access_token: str, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test that non-JSON 5xx response raises ServerError after retries."""
+        for _ in range(5):
+            httpx_mock.add_response(
+                method="POST",
+                url="https://graph.facebook.com/v22.0/me/albums",
+                text="<html>Internal Server Error</html>",
+                status_code=502,
+            )
+
+        async with FacebookAPIClient(access_token) as client:
+            with pytest.raises(ServerError, match="Server error 502"):
+                await client.create_album("Test Album")
+
+    async def test_non_json_4xx_response(
+        self, access_token: str, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test that non-JSON 4xx response raises FacebookAPIError."""
+        httpx_mock.add_response(
+            method="POST",
+            url="https://graph.facebook.com/v22.0/me/albums",
+            text="Bad Request",
+            status_code=400,
+        )
+
+        async with FacebookAPIClient(access_token) as client:
+            with pytest.raises(FacebookAPIError, match="Invalid API response"):
+                await client.create_album("Test Album")
+
+    async def test_network_error_retry(
+        self, access_token: str, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test that network errors are wrapped as ServerError for retry."""
+        httpx_mock.add_exception(
+            httpx.ConnectError("Connection refused"),
+            url="https://graph.facebook.com/v22.0/me/albums",
+        )
+        httpx_mock.add_response(
+            method="POST",
+            url="https://graph.facebook.com/v22.0/me/albums",
+            json={"id": "123"},
+            status_code=200,
+        )
+
+        async with FacebookAPIClient(access_token) as client:
+            album_id = await client.create_album("Test Album")
+
+        assert album_id == "123"
+        assert len(httpx_mock.get_requests()) == 2
+
+    async def test_missing_id_in_response(
+        self, access_token: str, httpx_mock: HTTPXMock
+    ) -> None:
+        """Test that a 200 response without id field raises FacebookAPIError."""
+        httpx_mock.add_response(
+            method="POST",
+            url="https://graph.facebook.com/v22.0/me/albums",
+            json={"name": "Test Album"},
+            status_code=200,
+        )
+
+        async with FacebookAPIClient(access_token) as client:
+            with pytest.raises(FacebookAPIError, match="missing 'id' field"):
+                await client.create_album("Test Album")
 
     async def test_client_context_manager_error(self, access_token: str) -> None:
         """Test that client raises error when used outside context manager."""

@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 
 from fb_photo_uploader.utils import is_image_file, scan_albums
-from fb_photo_uploader.models import Album
+from fb_photo_uploader.models import Album, UploadResult
 
 
 class TestIsImageFile:
@@ -136,3 +136,25 @@ class TestAlbumModel:
         """Test that album with no photos raises error."""
         with pytest.raises(ValueError, match="at least one photo"):
             Album(title="Test Album", photos=[])
+
+
+class TestUploadResultModel:
+    """Test UploadResult data model validation."""
+
+    def test_successful_upload_without_photo_id(self, tmp_path: Path) -> None:
+        """Test that successful upload without photo_id raises error."""
+        with pytest.raises(ValueError, match="must have a photo_id"):
+            UploadResult(
+                photo_path=tmp_path / "photo.jpg",
+                album_title="Test",
+                success=True,
+            )
+
+    def test_failed_upload_without_error_message(self, tmp_path: Path) -> None:
+        """Test that failed upload without error_message raises error."""
+        with pytest.raises(ValueError, match="must have an error_message"):
+            UploadResult(
+                photo_path=tmp_path / "photo.jpg",
+                album_title="Test",
+                success=False,
+            )
