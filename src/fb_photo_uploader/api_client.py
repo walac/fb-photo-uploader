@@ -155,7 +155,6 @@ class FacebookAPIClient:
         try:
             # Detect MIME type from file extension
             mime_type = mimetypes.guess_type(photo_path)[0] or "application/octet-stream"
-            # Read file into memory to avoid blocking the event loop during async upload
             content = photo_path.read_bytes()
             files = {"source": (photo_path.name, content, mime_type)}
             response = await self.client.post(url, files=files)
