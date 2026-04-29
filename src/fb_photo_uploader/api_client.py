@@ -109,6 +109,7 @@ class FacebookAPIClient:
 
         try:
             response = await self.client.post(url, data=data)
+            # May raise ServerError for non-JSON 5xx responses
             result = self._parse_json_response(response, f"creating album '{title}'")
 
             if response.status_code >= 400:
@@ -163,6 +164,7 @@ class FacebookAPIClient:
             files = {"source": (photo_path.name, content, mime_type)}
             response = await self.client.post(url, files=files)
 
+            # May raise ServerError for non-JSON 5xx responses
             result = self._parse_json_response(response, f"uploading {photo_path.name}")
 
             if response.status_code >= 400:
