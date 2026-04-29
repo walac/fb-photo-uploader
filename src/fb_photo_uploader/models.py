@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
+from collections.abc import Sequence
 
 
 @dataclass(frozen=True)
@@ -9,7 +10,7 @@ class Album:
     """Represents a Facebook album with photos to upload."""
 
     title: str
-    photos: list[Path]
+    photos: Sequence[Path]
 
     def __post_init__(self) -> None:
         """Validate album data."""
@@ -17,6 +18,7 @@ class Album:
             raise ValueError("Album title cannot be empty")
         if not self.photos:
             raise ValueError("Album must contain at least one photo")
+        object.__setattr__(self, "photos", tuple(self.photos))
 
 
 @dataclass(frozen=True)
