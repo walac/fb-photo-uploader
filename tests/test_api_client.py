@@ -23,14 +23,14 @@ class TestFacebookAPIClient:
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_123"},
+            json={"id": "123"},
             status_code=200,
         )
 
         async with FacebookAPIClient(access_token) as client:
             album_id = await client.create_album("Test Album")
 
-        assert album_id == "album_123"
+        assert album_id == "123"
         assert len(httpx_mock.get_requests()) == 1
 
     async def test_upload_photo_success(
@@ -43,13 +43,13 @@ class TestFacebookAPIClient:
 
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_123/photos",
+            url="https://graph.facebook.com/v22.0/123/photos",
             json={"id": "photo_456"},
             status_code=200,
         )
 
         async with FacebookAPIClient(access_token) as client:
-            photo_id = await client.upload_photo("album_123", photo_path)
+            photo_id = await client.upload_photo("123", photo_path)
 
         assert photo_id == "photo_456"
         assert len(httpx_mock.get_requests()) == 1
@@ -62,7 +62,7 @@ class TestFacebookAPIClient:
 
         async with FacebookAPIClient(access_token) as client:
             with pytest.raises(FileNotFoundError):
-                await client.upload_photo("album_123", photo_path)
+                await client.upload_photo("123", photo_path)
 
     async def test_rate_limit_retry(
         self, access_token: str, httpx_mock: HTTPXMock
@@ -84,14 +84,14 @@ class TestFacebookAPIClient:
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_123"},
+            json={"id": "123"},
             status_code=200,
         )
 
         async with FacebookAPIClient(access_token) as client:
             album_id = await client.create_album("Test Album")
 
-        assert album_id == "album_123"
+        assert album_id == "123"
         assert len(httpx_mock.get_requests()) == 3
 
     async def test_server_error_retry(
@@ -108,14 +108,14 @@ class TestFacebookAPIClient:
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_123"},
+            json={"id": "123"},
             status_code=200,
         )
 
         async with FacebookAPIClient(access_token) as client:
             album_id = await client.create_album("Test Album")
 
-        assert album_id == "album_123"
+        assert album_id == "123"
         assert len(httpx_mock.get_requests()) == 2
 
     async def test_max_retries_exceeded(
@@ -155,6 +155,28 @@ class TestFacebookAPIClient:
 
         # Should only attempt once (no retry for non-rate-limit 400)
         assert len(httpx_mock.get_requests()) == 1
+
+    async def test_upload_photo_invalid_album_id(
+        self, access_token: str, tmp_path: Path
+    ) -> None:
+        """Test that non-numeric album_id raises ValueError."""
+        photo_path = tmp_path / "test.jpg"
+        photo_path.write_bytes(b"fake image data")
+
+        async with FacebookAPIClient(access_token) as client:
+            with pytest.raises(ValueError, match="Invalid album_id"):
+                await client.upload_photo("not_numeric", photo_path)
+
+    async def test_upload_photo_empty_album_id(
+        self, access_token: str, tmp_path: Path
+    ) -> None:
+        """Test that empty album_id raises ValueError."""
+        photo_path = tmp_path / "test.jpg"
+        photo_path.write_bytes(b"fake image data")
+
+        async with FacebookAPIClient(access_token) as client:
+            with pytest.raises(ValueError, match="Invalid album_id"):
+                await client.upload_photo("", photo_path)
 
     async def test_client_context_manager_error(self, access_token: str) -> None:
         """Test that client raises error when used outside context manager."""

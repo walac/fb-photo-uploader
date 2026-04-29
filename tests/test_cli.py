@@ -44,32 +44,32 @@ class TestCLI:
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_1"},
+            json={"id": "1001"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_2"},
+            json={"id": "1002"},
             status_code=200,
         )
 
-        # Mock photo uploads (album_1 has 2 photos, album_2 has 1 photo)
+        # Mock photo uploads (1001 has 2 photos, 1002 has 1 photo)
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_1/photos",
+            url="https://graph.facebook.com/v22.0/1001/photos",
             json={"id": "photo_1_0"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_1/photos",
+            url="https://graph.facebook.com/v22.0/1001/photos",
             json={"id": "photo_1_1"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_2/photos",
+            url="https://graph.facebook.com/v22.0/1002/photos",
             json={"id": "photo_2_0"},
             status_code=200,
         )
@@ -112,32 +112,32 @@ class TestCLI:
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_1"},
+            json={"id": "1001"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_2"},
+            json={"id": "1002"},
             status_code=200,
         )
 
-        # Mock photo uploads (album_1 has 2 photos, album_2 has 1 photo)
+        # Mock photo uploads (1001 has 2 photos, 1002 has 1 photo)
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_1/photos",
+            url="https://graph.facebook.com/v22.0/1001/photos",
             json={"id": "photo_1_0"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_1/photos",
+            url="https://graph.facebook.com/v22.0/1001/photos",
             json={"id": "photo_1_1"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_2/photos",
+            url="https://graph.facebook.com/v22.0/1002/photos",
             json={"id": "photo_2_0"},
             status_code=200,
         )
@@ -170,32 +170,32 @@ class TestCLI:
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_123"},
+            json={"id": "123"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_456"},
+            json={"id": "456"},
             status_code=200,
         )
 
         # Mock all photo uploads as failures (3 photos total)
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_123/photos",
+            url="https://graph.facebook.com/v22.0/123/photos",
             json={"error": {"message": "upload failed", "code": 100}},
             status_code=400,
         )
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_123/photos",
+            url="https://graph.facebook.com/v22.0/123/photos",
             json={"error": {"message": "upload failed", "code": 100}},
             status_code=400,
         )
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_456/photos",
+            url="https://graph.facebook.com/v22.0/456/photos",
             json={"error": {"message": "upload failed", "code": 100}},
             status_code=400,
         )
@@ -223,32 +223,32 @@ class TestCLI:
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_1"},
+            json={"id": "1001"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
             url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "album_2"},
+            json={"id": "1002"},
             status_code=200,
         )
 
-        # Mock photo uploads (album_1 has 2 photos, album_2 has 1 photo)
+        # Mock photo uploads (1001 has 2 photos, 1002 has 1 photo)
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_1/photos",
+            url="https://graph.facebook.com/v22.0/1001/photos",
             json={"id": "photo_1_0"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_1/photos",
+            url="https://graph.facebook.com/v22.0/1001/photos",
             json={"id": "photo_1_1"},
             status_code=200,
         )
         httpx_mock.add_response(
             method="POST",
-            url="https://graph.facebook.com/v22.0/album_2/photos",
+            url="https://graph.facebook.com/v22.0/1002/photos",
             json={"id": "photo_2_0"},
             status_code=200,
         )

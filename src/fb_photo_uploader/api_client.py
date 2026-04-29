@@ -142,6 +142,7 @@ class FacebookAPIClient:
             Photo ID
 
         Raises:
+            ValueError: If album_id is empty or non-numeric
             FacebookAPIError: If photo upload fails
             RateLimitError: If rate limit is exceeded
             ServerError: If server error occurs
@@ -149,6 +150,9 @@ class FacebookAPIClient:
         """
         if not photo_path.exists():
             raise FileNotFoundError(f"Photo file not found: {photo_path}")
+
+        if not album_id or not album_id.isdigit():
+            raise ValueError(f"Invalid album_id: {album_id}")
 
         url = f"{self.base_url}/{album_id}/photos"
 
