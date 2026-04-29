@@ -110,7 +110,7 @@ def upload(
         dir_okay=True,
         readable=True,
     ),
-    access_token: str = typer.Option(
+    access_token: str | None = typer.Option(
         None,
         "--access-token",
         "-t",
