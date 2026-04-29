@@ -160,9 +160,9 @@ class FacebookAPIClient:
         try:
             # Detect MIME type from file extension
             mime_type = mimetypes.guess_type(photo_path)[0] or "application/octet-stream"
-            content = photo_path.read_bytes()
-            files = {"source": (photo_path.name, content, mime_type)}
-            response = await self.client.post(url, files=files)
+            with open(photo_path, "rb") as f:
+                files = {"source": (photo_path.name, f, mime_type)}
+                response = await self.client.post(url, files=files)
 
             # May raise ServerError for non-JSON 5xx responses
             result = self._parse_json_response(response, f"uploading {photo_path.name}")
