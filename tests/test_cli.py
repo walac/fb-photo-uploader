@@ -25,9 +25,8 @@ class TestCLI:
         result = runner.invoke(app, [str(temp_photos_dir), "--dry-run"])
 
         assert result.exit_code == 0
-        # Check that upload was successful (output may be in stdout or captured logs)
         output = result.stdout + (result.stderr or "")
-        assert "Successful: 3" in output or result.exit_code == 0
+        assert "Successful: 3" in output
 
     def test_cli_missing_access_token(self, temp_photos_dir: Path) -> None:
         """Test CLI fails without access token when not in dry-run."""
