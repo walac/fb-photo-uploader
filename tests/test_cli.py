@@ -36,43 +36,9 @@ class TestCLI:
         assert "access token is required" in result.stdout.lower()
 
     def test_cli_with_access_token(
-        self, temp_photos_dir: Path, access_token: str, httpx_mock: HTTPXMock
+        self, temp_photos_dir: Path, access_token: str, mock_successful_uploads: HTTPXMock
     ) -> None:
         """Test CLI with access token."""
-        # Mock album creation (2 albums)
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "1001"},
-            status_code=200,
-        )
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "1002"},
-            status_code=200,
-        )
-
-        # Mock photo uploads (1001 has 2 photos, 1002 has 1 photo)
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/1001/photos",
-            json={"id": "photo_1_0"},
-            status_code=200,
-        )
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/1001/photos",
-            json={"id": "photo_1_1"},
-            status_code=200,
-        )
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/1002/photos",
-            json={"id": "photo_2_0"},
-            status_code=200,
-        )
-
         result = runner.invoke(
             app,
             [
@@ -104,43 +70,9 @@ class TestCLI:
         assert result.exit_code == 0
 
     def test_cli_custom_concurrency(
-        self, temp_photos_dir: Path, access_token: str, httpx_mock: HTTPXMock
+        self, temp_photos_dir: Path, access_token: str, mock_successful_uploads: HTTPXMock
     ) -> None:
         """Test CLI with custom max concurrent uploads."""
-        # Mock album creation (2 albums)
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "1001"},
-            status_code=200,
-        )
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "1002"},
-            status_code=200,
-        )
-
-        # Mock photo uploads (1001 has 2 photos, 1002 has 1 photo)
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/1001/photos",
-            json={"id": "photo_1_0"},
-            status_code=200,
-        )
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/1001/photos",
-            json={"id": "photo_1_1"},
-            status_code=200,
-        )
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/1002/photos",
-            json={"id": "photo_2_0"},
-            status_code=200,
-        )
-
         result = runner.invoke(
             app,
             [
@@ -213,44 +145,10 @@ class TestCLI:
         assert "Failed: 3" in result.stdout or "Failed uploads" in result.stdout
 
     def test_cli_access_token_from_env(
-        self, temp_photos_dir: Path, access_token: str, monkeypatch, httpx_mock: HTTPXMock
+        self, temp_photos_dir: Path, access_token: str, monkeypatch, mock_successful_uploads: HTTPXMock
     ) -> None:
         """Test CLI reads access token from environment variable."""
         monkeypatch.setenv("FB_ACCESS_TOKEN", access_token)
-
-        # Mock album creation (2 albums)
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "1001"},
-            status_code=200,
-        )
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/me/albums",
-            json={"id": "1002"},
-            status_code=200,
-        )
-
-        # Mock photo uploads (1001 has 2 photos, 1002 has 1 photo)
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/1001/photos",
-            json={"id": "photo_1_0"},
-            status_code=200,
-        )
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/1001/photos",
-            json={"id": "photo_1_1"},
-            status_code=200,
-        )
-        httpx_mock.add_response(
-            method="POST",
-            url="https://graph.facebook.com/v22.0/1002/photos",
-            json={"id": "photo_2_0"},
-            status_code=200,
-        )
 
         result = runner.invoke(app, [str(temp_photos_dir)])
 

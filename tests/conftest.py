@@ -2,8 +2,7 @@
 
 import pytest
 from pathlib import Path
-import tempfile
-import shutil
+from pytest_httpx import HTTPXMock
 
 
 @pytest.fixture
@@ -19,6 +18,8 @@ def temp_photos_dir(tmp_path: Path) -> Path:
                 photo3.jpg
             empty_album/
             not_a_dir.txt
+
+    Note: mock_successful_uploads assumes this exact layout (2 albums, 3 photos).
     """
     # Create album directories
     album1 = tmp_path / "album1"
@@ -44,3 +45,43 @@ def temp_photos_dir(tmp_path: Path) -> Path:
 def access_token() -> str:
     """Return a fake access token for testing."""
     return "test_access_token_123"
+
+
+@pytest.fixture
+def mock_successful_uploads(httpx_mock: HTTPXMock) -> HTTPXMock:
+    """Mock successful album creation and photo uploads for the standard temp_photos_dir layout.
+
+    Mocks 2 album creations (IDs 1001, 1002) and 3 photo uploads
+    (2 for album 1001, 1 for album 1002).
+    """
+    httpx_mock.add_response(
+        method="POST",
+        url="https://graph.facebook.com/v22.0/me/albums",
+        json={"id": "1001"},
+        status_code=200,
+    )
+    httpx_mock.add_response(
+        method="POST",
+        url="https://graph.facebook.com/v22.0/me/albums",
+        json={"id": "1002"},
+        status_code=200,
+    )
+    httpx_mock.add_response(
+        method="POST",
+        url="https://graph.facebook.com/v22.0/1001/photos",
+        json={"id": "photo_1_0"},
+        status_code=200,
+    )
+    httpx_mock.add_response(
+        method="POST",
+        url="https://graph.facebook.com/v22.0/1001/photos",
+        json={"id": "photo_1_1"},
+        status_code=200,
+    )
+    httpx_mock.add_response(
+        method="POST",
+        url="https://graph.facebook.com/v22.0/1002/photos",
+        json={"id": "photo_2_0"},
+        status_code=200,
+    )
+    return httpx_mock
