@@ -101,3 +101,27 @@ Desktop.ini
 *.temp
 .tmp/
 .temp/
+
+# AI / LLM / Agents
+.claude/
+CLAUDE.md
+.serena/
+.aider*
+.cursor/
+.cursorrules
+.continue/
+.copilot/
+.codeium/
+.windsurf/
+.windsurfrules
+.gemini/
+GEMINI.md
+.tabby/
+.sourcegraph/
+.cody/
+.codex/
+.augment/
+.goose/
+.roo/
+.amp/
+AGENTS.md
