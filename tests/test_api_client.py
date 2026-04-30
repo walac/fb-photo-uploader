@@ -17,9 +17,7 @@ from fb_photo_uploader.api_client import (
 class TestFacebookAPIClient:
     """Test Facebook API client functionality."""
 
-    async def test_create_album_success(
-        self, access_token: str, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_create_album_success(self, access_token: str, httpx_mock: HTTPXMock) -> None:
         """Test successful album creation."""
         httpx_mock.add_response(
             method="POST",
@@ -55,9 +53,7 @@ class TestFacebookAPIClient:
         assert photo_id == "photo_456"
         assert len(httpx_mock.get_requests()) == 1
 
-    async def test_upload_photo_file_not_found(
-        self, access_token: str, tmp_path: Path
-    ) -> None:
+    async def test_upload_photo_file_not_found(self, access_token: str, tmp_path: Path) -> None:
         """Test photo upload with non-existent file."""
         photo_path = tmp_path / "nonexistent.jpg"
 
@@ -65,9 +61,7 @@ class TestFacebookAPIClient:
             with pytest.raises(FileNotFoundError):
                 await client.upload_photo("123", photo_path)
 
-    async def test_rate_limit_retry(
-        self, access_token: str, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_rate_limit_retry(self, access_token: str, httpx_mock: HTTPXMock) -> None:
         """Test retry mechanism for rate limit errors."""
         # First two calls return rate limit error, third succeeds
         httpx_mock.add_response(
@@ -95,9 +89,7 @@ class TestFacebookAPIClient:
         assert album_id == "123"
         assert len(httpx_mock.get_requests()) == 3
 
-    async def test_server_error_retry(
-        self, access_token: str, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_server_error_retry(self, access_token: str, httpx_mock: HTTPXMock) -> None:
         """Test retry mechanism for server errors."""
         # First call returns 500, second succeeds
         httpx_mock.add_response(
@@ -119,9 +111,7 @@ class TestFacebookAPIClient:
         assert album_id == "123"
         assert len(httpx_mock.get_requests()) == 2
 
-    async def test_max_retries_exceeded(
-        self, access_token: str, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_max_retries_exceeded(self, access_token: str, httpx_mock: HTTPXMock) -> None:
         """Test that retries stop after max attempts."""
         # Always return rate limit error - only need 5 (initial + 4 retries)
         for _ in range(5):
@@ -139,9 +129,7 @@ class TestFacebookAPIClient:
         # Should attempt 5 times (initial + 4 retries)
         assert len(httpx_mock.get_requests()) == 5
 
-    async def test_permanent_error_no_retry(
-        self, access_token: str, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_permanent_error_no_retry(self, access_token: str, httpx_mock: HTTPXMock) -> None:
         """Test that permanent errors (4xx except rate limit) don't retry."""
         httpx_mock.add_response(
             method="POST",
@@ -157,9 +145,7 @@ class TestFacebookAPIClient:
         # Should only attempt once (no retry for non-rate-limit 400)
         assert len(httpx_mock.get_requests()) == 1
 
-    async def test_upload_photo_invalid_album_id(
-        self, access_token: str, tmp_path: Path
-    ) -> None:
+    async def test_upload_photo_invalid_album_id(self, access_token: str, tmp_path: Path) -> None:
         """Test that non-numeric album_id raises ValueError."""
         photo_path = tmp_path / "test.jpg"
         photo_path.write_bytes(b"fake image data")
@@ -168,9 +154,7 @@ class TestFacebookAPIClient:
             with pytest.raises(ValueError, match="Invalid album_id"):
                 await client.upload_photo("not_numeric", photo_path)
 
-    async def test_upload_photo_empty_album_id(
-        self, access_token: str, tmp_path: Path
-    ) -> None:
+    async def test_upload_photo_empty_album_id(self, access_token: str, tmp_path: Path) -> None:
         """Test that empty album_id raises ValueError."""
         photo_path = tmp_path / "test.jpg"
         photo_path.write_bytes(b"fake image data")
@@ -179,9 +163,7 @@ class TestFacebookAPIClient:
             with pytest.raises(ValueError, match="Invalid album_id"):
                 await client.upload_photo("", photo_path)
 
-    async def test_non_json_5xx_response(
-        self, access_token: str, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_non_json_5xx_response(self, access_token: str, httpx_mock: HTTPXMock) -> None:
         """Test that non-JSON 5xx response raises ServerError after retries."""
         for _ in range(5):
             httpx_mock.add_response(
@@ -195,9 +177,7 @@ class TestFacebookAPIClient:
             with pytest.raises(ServerError, match="Server error 502"):
                 await client.create_album("Test Album")
 
-    async def test_non_json_4xx_response(
-        self, access_token: str, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_non_json_4xx_response(self, access_token: str, httpx_mock: HTTPXMock) -> None:
         """Test that non-JSON 4xx response raises FacebookAPIError."""
         httpx_mock.add_response(
             method="POST",
@@ -210,9 +190,7 @@ class TestFacebookAPIClient:
             with pytest.raises(FacebookAPIError, match="Invalid API response"):
                 await client.create_album("Test Album")
 
-    async def test_network_error_retry(
-        self, access_token: str, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_network_error_retry(self, access_token: str, httpx_mock: HTTPXMock) -> None:
         """Test that network errors are wrapped as ServerError for retry."""
         httpx_mock.add_exception(
             httpx.ConnectError("Connection refused"),
@@ -231,9 +209,7 @@ class TestFacebookAPIClient:
         assert album_id == "123"
         assert len(httpx_mock.get_requests()) == 2
 
-    async def test_missing_id_in_response(
-        self, access_token: str, httpx_mock: HTTPXMock
-    ) -> None:
+    async def test_missing_id_in_response(self, access_token: str, httpx_mock: HTTPXMock) -> None:
         """Test that a 200 response without id field raises FacebookAPIError."""
         httpx_mock.add_response(
             method="POST",

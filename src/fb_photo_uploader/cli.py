@@ -156,9 +156,7 @@ def upload(
     if dry_run and not access_token:
         access_token = "dry_run_token"
 
-    exit_code = asyncio.run(
-        async_upload(root_dir, access_token, dry_run, max_concurrent)
-    )
+    exit_code = asyncio.run(async_upload(root_dir, access_token, dry_run, max_concurrent))
     raise typer.Exit(exit_code)
 
 

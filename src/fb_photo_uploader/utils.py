@@ -58,9 +58,7 @@ def scan_albums(root_dir: Path) -> list[Album]:
         if photos:
             album = Album(title=subdir.name, photos=photos)
             albums.append(album)
-            logger.info(
-                f"Found album '{album.title}' with {len(album.photos)} photo(s)"
-            )
+            logger.info(f"Found album '{album.title}' with {len(album.photos)} photo(s)")
         else:
             logger.warning(f"Skipping empty album directory: {subdir}")
 

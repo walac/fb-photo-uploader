@@ -145,7 +145,11 @@ class TestCLI:
         assert "Failed: 3" in result.stdout or "Failed uploads" in result.stdout
 
     def test_cli_access_token_from_env(
-        self, temp_photos_dir: Path, access_token: str, monkeypatch, mock_successful_uploads: HTTPXMock
+        self,
+        temp_photos_dir: Path,
+        access_token: str,
+        monkeypatch,
+        mock_successful_uploads: HTTPXMock,
     ) -> None:
         """Test CLI reads access token from environment variable."""
         monkeypatch.setenv("FB_ACCESS_TOKEN", access_token)

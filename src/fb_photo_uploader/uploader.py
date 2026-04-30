@@ -43,9 +43,7 @@ class PhotoUploader:
         results: list[UploadResult] = []
 
         for album in albums:
-            logger.info(
-                f"Processing album '{album.title}' with {len(album.photos)} photo(s)"
-            )
+            logger.info(f"Processing album '{album.title}' with {len(album.photos)} photo(s)")
             album_results = await self._upload_album(album)
             results.extend(album_results)
 
@@ -117,9 +115,7 @@ class PhotoUploader:
             Upload result
         """
         if self.dry_run:
-            logger.info(
-                f"[DRY RUN] Would upload {photo_path.name} to album '{album_title}'"
-            )
+            logger.info(f"[DRY RUN] Would upload {photo_path.name} to album '{album_title}'")
             return UploadResult(
                 photo_path=photo_path,
                 album_title=album_title,

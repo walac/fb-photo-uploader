@@ -113,7 +113,9 @@ class FacebookAPIClient:
             result = self._parse_json_response(response, f"creating album '{title}'")
 
             if response.status_code >= 400:
-                self._handle_error_response(response.status_code, result, f"creating album '{title}'")
+                self._handle_error_response(
+                    response.status_code, result, f"creating album '{title}'"
+                )
 
             album_id = result.get("id")
             if not album_id:
@@ -168,24 +170,22 @@ class FacebookAPIClient:
             result = self._parse_json_response(response, f"uploading {photo_path.name}")
 
             if response.status_code >= 400:
-                self._handle_error_response(response.status_code, result, f"uploading {photo_path.name}")
+                self._handle_error_response(
+                    response.status_code, result, f"uploading {photo_path.name}"
+                )
 
             photo_id = result.get("id")
             if not photo_id:
                 raise FacebookAPIError(
                     f"API response missing 'id' field while uploading {photo_path.name}: {result}"
                 )
-            logger.debug(
-                f"Uploaded {photo_path.name} to album {album_id}, photo ID: {photo_id}"
-            )
+            logger.debug(f"Uploaded {photo_path.name} to album {album_id}, photo ID: {photo_id}")
             return photo_id
         except httpx.RequestError as e:
             logger.warning(f"Network error while uploading {photo_path.name}, will retry: {e}")
             raise ServerError(f"Network error: {e}") from e
 
-    def _parse_json_response(
-        self, response: httpx.Response, context: str
-    ) -> dict[str, Any]:
+    def _parse_json_response(self, response: httpx.Response, context: str) -> dict[str, Any]:
         """Parse JSON response, handling non-JSON responses gracefully.
 
         Args:
@@ -205,12 +205,8 @@ class FacebookAPIClient:
             # Non-JSON response (e.g., HTML error page during outages)
             if response.status_code >= 500:
                 logger.warning(f"Server returned non-JSON response while {context}, will retry")
-                raise ServerError(
-                    f"Server error {response.status_code}: {response.text[:200]}"
-                )
-            raise FacebookAPIError(
-                f"Invalid API response while {context}: {response.text[:200]}"
-            )
+                raise ServerError(f"Server error {response.status_code}: {response.text[:200]}")
+            raise FacebookAPIError(f"Invalid API response while {context}: {response.text[:200]}")
 
     def _handle_error_response(
         self, status_code: int, result: dict[str, Any], context: str
